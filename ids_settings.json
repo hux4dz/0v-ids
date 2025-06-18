@@ -1,0 +1,169 @@
+{
+    "api_keys": {
+        "abuseipdb": "",
+        "virustotal": "",
+        "alienvault": "",
+        "threatfox": ""
+    },
+    "scan_settings": {
+        "default_ports": "20-25,53,80,110-111,135,139,143,443,445,993,995,1723,3306,3389,5900,8080",
+        "scan_timeout": 2.0,
+        "max_threads": 50
+    },
+    "monitor_settings": {
+        "alert_threshold": 100,
+        "alert_cooldown": 60,
+        "log_interval": 1.0
+    },
+    "ui_settings": {
+        "theme": "default",
+        "font_size": 12,
+        "window_size": "1200x800"
+    },
+    "alert_settings": {
+        "connection_flood": {
+            "threshold": 550,
+            "cooldown": 133,
+            "description": "Number of connections before alerting",
+            "severity": "low"
+        },
+        "port_scan": {
+            "threshold": 66,
+            "cooldown": 472,
+            "description": "Number of ports scanned before alerting",
+            "severity": "low"
+        },
+        "data_transfer": {
+            "threshold": 1152,
+            "cooldown": 60,
+            "description": "Data transfer size threshold in bytes",
+            "severity": "low"
+        },
+        "suspicious_pattern": {
+            "port_threshold": 10,
+            "connection_threshold": 20,
+            "cooldown": 300,
+            "description": "Thresholds for suspicious connection patterns",
+            "severity": "low"
+        },
+        "alert_cooldown": {
+            "default": 60,
+            "description": "Default cooldown period between repeated alerts"
+        }
+    },
+    "suspicious_ports": {
+        "22": {
+            "service": "SSH",
+            "risk": "medium",
+            "description": "Secure Shell - Remote access protocol"
+        },
+        "23": {
+            "service": "Telnet",
+            "risk": "high",
+            "description": "Telnet - Unencrypted remote access"
+        },
+        "445": {
+            "service": "SMB",
+            "risk": "high",
+            "description": "Server Message Block - File sharing protocol"
+        },
+        "3389": {
+            "service": "RDP",
+            "risk": "medium",
+            "description": "Remote Desktop Protocol"
+        },
+        "1433": {
+            "service": "MSSQL",
+            "risk": "high",
+            "description": "Microsoft SQL Server"
+        },
+        "3306": {
+            "service": "MySQL",
+            "risk": "high",
+            "description": "MySQL Database Server"
+        },
+        "5432": {
+            "service": "PostgreSQL",
+            "risk": "high",
+            "description": "PostgreSQL Database Server"
+        },
+        "27017": {
+            "service": "MongoDB",
+            "risk": "high",
+            "description": "MongoDB Database Server"
+        },
+        "6379": {
+            "service": "Redis",
+            "risk": "high",
+            "description": "Redis Cache Server"
+        },
+        "9200": {
+            "service": "Elasticsearch",
+            "risk": "high",
+            "description": "Elasticsearch Server"
+        },
+        "11211": {
+            "service": "Memcached",
+            "risk": "high",
+            "description": "Memcached Server"
+        },
+        "555": {
+            "service": "fgdg",
+            "risk": "medium",
+            "description": "fdgdfg"
+        }
+    },
+    "ignored_protocols": {},
+    "excluded_high_volume_hosts": [],
+    "malicious_ips": [
+        "203.0.113.1",
+        "8.8.8.8",
+        "198.51.100.2",
+        "104.21.96.1",
+        "192.0.2.3",
+        "8.66.66.100"
+    ],
+    "ignored_ports": {
+        "80": "Standard HTTP traffic",
+        "443": "Standard HTTPS traffic",
+        "53": "Standard DNS traffic"
+    },
+    "notification_settings": {
+        "desktop_notifications": true,
+        "sound_alerts": true,
+        "alert_grouping": true,
+        "severity_filter": {
+            "high": true,
+            "medium": true,
+            "low": false
+        }
+    },
+    "response_settings": {
+        "automated_actions": {
+            "block_malicious_ip": true,
+            "close_suspicious_connection": true,
+            "log_detailed_info": true,
+            "notify_admin": true
+        },
+        "escalation": {
+            "delay": 30,
+            "max_retries": 3
+        },
+        "workflow": {
+            "require_acknowledgment": true,
+            "auto_resolve": false,
+            "resolution_timeout": 24
+        }
+    },
+    "export_settings": {
+        "format": "csv",
+        "include_timestamps": true,
+        "include_severity": true,
+        "include_details": true,
+        "schedule": {
+            "auto_export": false,
+            "export_interval": 24,
+            "export_path": "./exports"
+        }
+    }
+}

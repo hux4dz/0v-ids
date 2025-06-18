@@ -1,0 +1,499 @@
+{
+    "23.115.183.16": {
+        "added_date": "2025-06-13T14:38:17.792274",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "35.147.138.64": {
+        "added_date": "2025-06-13T14:38:17.796535",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "35.148.212.71": {
+        "added_date": "2025-06-13T14:38:17.796898",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "38.94.112.223": {
+        "added_date": "2025-06-13T14:38:17.798371",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "47.156.65.28": {
+        "added_date": "2025-06-13T14:38:17.800116",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "47.187.169.155": {
+        "added_date": "2025-06-13T14:38:17.800116",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "57.132.195.242": {
+        "added_date": "2025-06-13T14:38:17.801493",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "64.121.31.177": {
+        "added_date": "2025-06-13T14:38:17.802422",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "66.31.89.132": {
+        "added_date": "2025-06-13T14:38:17.803587",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.4.218.225": {
+        "added_date": "2025-06-13T14:38:17.803587",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.63.240.128": {
+        "added_date": "2025-06-13T14:38:17.804589",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.201.131.53": {
+        "added_date": "2025-06-13T14:38:17.804589",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.207.111.178": {
+        "added_date": "2025-06-13T14:38:17.805651",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.225.160.218": {
+        "added_date": "2025-06-13T14:38:17.805651",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "68.228.199.52": {
+        "added_date": "2025-06-13T14:38:17.805651",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "69.76.192.86": {
+        "added_date": "2025-06-13T14:38:17.806772",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "69.181.45.12": {
+        "added_date": "2025-06-13T14:38:17.808033",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "69.221.235.68": {
+        "added_date": "2025-06-13T14:38:17.808033",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "69.233.5.153": {
+        "added_date": "2025-06-13T14:38:17.809045",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "70.93.83.98": {
+        "added_date": "2025-06-13T14:38:17.809045",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "70.163.138.80": {
+        "added_date": "2025-06-13T14:38:17.810043",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "71.194.93.157": {
+        "added_date": "2025-06-13T14:38:17.810581",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "71.223.67.206": {
+        "added_date": "2025-06-13T14:38:17.811601",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "72.109.214.192": {
+        "added_date": "2025-06-13T14:38:17.811601",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "72.178.105.205": {
+        "added_date": "2025-06-13T14:38:17.812614",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "72.181.76.253": {
+        "added_date": "2025-06-13T14:38:17.812614",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "72.222.165.156": {
+        "added_date": "2025-06-13T14:38:17.812614",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.32.66.201": {
+        "added_date": "2025-06-13T14:38:17.814082",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.39.240.107": {
+        "added_date": "2025-06-13T14:38:17.815160",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.56.6.12": {
+        "added_date": "2025-06-13T14:38:17.815160",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.69.221.251": {
+        "added_date": "2025-06-13T14:38:17.816490",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.95.209.147": {
+        "added_date": "2025-06-13T14:38:17.816490",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.115.216.69": {
+        "added_date": "2025-06-13T14:38:17.817501",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.131.80.123": {
+        "added_date": "2025-06-13T14:38:17.818506",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.136.58.202": {
+        "added_date": "2025-06-13T14:38:17.818506",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.140.162.39": {
+        "added_date": "2025-06-13T14:38:17.820014",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.206.205.242": {
+        "added_date": "2025-06-13T14:38:17.820014",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "73.255.169.91": {
+        "added_date": "2025-06-13T14:38:17.821557",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "75.62.67.224": {
+        "added_date": "2025-06-13T14:38:17.822560",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "75.204.19.148": {
+        "added_date": "2025-06-13T14:38:17.822560",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "76.97.134.218": {
+        "added_date": "2025-06-13T14:38:17.823614",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "76.181.182.87": {
+        "added_date": "2025-06-13T14:38:17.824619",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "96.86.216.86": {
+        "added_date": "2025-06-13T14:38:17.825622",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "97.100.206.18": {
+        "added_date": "2025-06-13T14:38:17.826626",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "97.201.234.186": {
+        "added_date": "2025-06-13T14:38:17.826626",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "98.118.38.65": {
+        "added_date": "2025-06-13T14:38:17.827634",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "98.148.217.52": {
+        "added_date": "2025-06-13T14:38:17.828644",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "98.208.36.178": {
+        "added_date": "2025-06-13T14:38:17.828644",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "99.51.237.27": {
+        "added_date": "2025-06-13T14:38:17.830208",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "99.98.68.21": {
+        "added_date": "2025-06-13T14:38:17.831447",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "99.98.253.59": {
+        "added_date": "2025-06-13T14:38:17.832464",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.5.117.16": {
+        "added_date": "2025-06-13T14:38:17.833540",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.67.22.214": {
+        "added_date": "2025-06-13T14:38:17.834613",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.80.157.159": {
+        "added_date": "2025-06-13T14:38:17.834613",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.90.9.105": {
+        "added_date": "2025-06-13T14:38:17.835693",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.195.40.156": {
+        "added_date": "2025-06-13T14:38:17.836775",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.202.222.208": {
+        "added_date": "2025-06-13T14:38:17.837838",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "108.220.192.75": {
+        "added_date": "2025-06-13T14:38:17.838899",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "136.32.163.195": {
+        "added_date": "2025-06-13T14:38:17.840476",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "136.34.162.12": {
+        "added_date": "2025-06-13T14:38:17.841549",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "151.204.209.105": {
+        "added_date": "2025-06-13T14:38:17.841549",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "172.119.89.151": {
+        "added_date": "2025-06-13T14:38:17.842614",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "173.23.54.59": {
+        "added_date": "2025-06-13T14:38:17.844631",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "174.83.216.131": {
+        "added_date": "2025-06-13T14:38:17.845687",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "174.170.235.70": {
+        "added_date": "2025-06-13T14:38:17.846976",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "174.171.11.148": {
+        "added_date": "2025-06-13T14:38:17.846976",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "192.228.33.169": {
+        "added_date": "2025-06-13T14:38:17.849075",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "216.12.83.78": {
+        "added_date": "2025-06-13T14:38:17.850072",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "216.14.73.246": {
+        "added_date": "2025-06-13T14:38:17.851474",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "high",
+        "expiry": null
+    },
+    "23.116.78.19": {
+        "added_date": "2025-06-13T14:38:17.793276",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "low",
+        "expiry": null
+    },
+    "24.10.132.229": {
+        "added_date": "2025-06-13T14:38:17.794664",
+        "reason": "Known malicious IP from security list",
+        "category": "attack",
+        "severity": "critical",
+        "expiry": null
+    }
+}
