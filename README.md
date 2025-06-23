@@ -216,7 +216,7 @@ python-ids/
 ├── port_scanner.py              # Port scanning functionality
 ├── ip_info.py                   # IP information lookup
 ├── settings_manager.py          # Configuration management
-├── test_alerts.py               # Comprehensive test suite
+├── test_alerts.py               # Attack test simulation
 ├── ids_settings.json            # Main configuration file
 ├── malicious_ips.json           # Malicious IP database
 ├── requirements.txt             # Python dependencies
