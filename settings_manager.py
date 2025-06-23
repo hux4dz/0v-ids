@@ -98,7 +98,6 @@ class SettingsWindow:
         self.notebook.add(self.api_tab, text="API Keys")
         self.notebook.add(self.scan_tab, text="Scan Settings")
         self.notebook.add(self.monitor_tab, text="Monitor Settings")
-        self.notebook.add(self.ui_tab, text="UI Settings")
         
         # Create content for each tab
         self._create_api_tab()

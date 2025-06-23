@@ -9,7 +9,7 @@ from datetime import datetime
 import json
 from collections import defaultdict
 import re
-from scapy.all import sniff, IP, TCP, UDP, get_if_list, sr1, ICMP
+from scapy.all import sniff, IP, TCP, UDP, get_if_list, sr1, ICMP, Raw
 import socket
 import struct
 import requests
@@ -135,69 +135,145 @@ class NetworkMonitor:
             return
 
         try:
-            if IP in packet:
+            # Load ignored processes from settings
+            settings_manager = SettingsManager()
+            settings = settings_manager.load_settings()
+            ignored_processes = set([p.lower() for p in settings.get('ignored_processes', [])])
+
+            # Helper to get process name for a connection
+            def get_process_name(ip, port, direction):
+                for conn in psutil.net_connections(kind='inet'):
+                    try:
+                        if direction == "OUTGOING":
+                            if conn.laddr and conn.raddr and \
+                               conn.laddr.ip == ip and conn.laddr.port == port:
+                                if conn.pid:
+                                    return psutil.Process(conn.pid).name().lower()
+                        elif direction == "INCOMING":
+                            if conn.raddr and conn.laddr and \
+                               conn.raddr.ip == ip and conn.raddr.port == port:
+                                if conn.pid:
+                                    return psutil.Process(conn.pid).name().lower()
+                    except Exception:
+                        continue
+                return None
+
+            if isinstance(packet, dict): # HTTP data
+                src_ip = packet['src_ip']
+                dst_ip = packet['dst_ip']
+                dst_port = packet['dst_port']
+                packet_bytes = packet['payload']
+                protocol = "HTTP"
+                direction = "INCOMING" if dst_ip == self.get_local_ip() else "OUTGOING"
+                analysis_src_ip = src_ip
+                analysis_dst_ip = dst_ip
+                analysis_dst_port = dst_port
+                tcp_flags = None
+            elif IP in packet: # Scapy packet
                 src_ip = packet[IP].src
                 dst_ip = packet[IP].dst
-                
+                tcp_flags = None
                 if TCP in packet:
                     dst_port = packet[TCP].dport
+                    src_port = packet[TCP].sport
                     protocol = "TCP"
+                    tcp_flags = packet[TCP].flags
                 elif UDP in packet:
                     dst_port = packet[UDP].dport
+                    src_port = packet[UDP].sport
                     protocol = "UDP"
                 elif ICMP in packet:
                     dst_port = 0  # ICMP doesn't use ports
+                    src_port = 0
                     protocol = "ICMP"
                 else:
-                    return
+                    return # Not a supported protocol
+                local_ip = self.get_local_ip()
+                if dst_ip == local_ip:
+                    direction = "INCOMING"
+                    proc_ip = src_ip
+                    proc_port = src_port
+                else:
+                    direction = "OUTGOING"
+                    proc_ip = src_ip
+                    proc_port = packet[TCP].sport if TCP in packet else (packet[UDP].sport if UDP in packet else 0)
 
-                # Update statistics
-                self.stats["total_packets"] += 1
+                # We should NOT swap src and dst for analysis.
+                # The ThreatDetector should analyze based on the actual source of the packet.
+                analysis_src_ip = src_ip
+                analysis_dst_ip = dst_ip
+                analysis_dst_port = dst_port
+                
+                packet_bytes = bytes(packet.getlayer(Raw)) if packet.haslayer(Raw) else b''
+            else:
+                return # Not a recognizable packet format
 
-                # Convert packet to bytes for analysis
-                packet_bytes = bytes(packet) if hasattr(packet, '__bytes__') else None
+            # --- Ignore packets from ignored processes ---
+            proc_name = get_process_name(proc_ip, proc_port, direction)
+            if proc_name and proc_name in ignored_processes:
+                return  # Skip analysis for ignored processes
 
-                # Pass the packet bytes to the alert manager
-                alerts = self.alert_manager.analyze_packet(src_ip, dst_ip, dst_port, packet_bytes)
+            # Update statistics
+            self.stats["total_packets"] += 1
 
-                if alerts:
-                    self.stats["suspicious_connections"] += 1
-                    for alert in alerts:
-                        self.stats["alerts"].append({
-                            "timestamp": datetime.now().isoformat(),
-                            "alert": alert["message"],
-                            "src": src_ip,
-                            "dst": dst_ip,
-                            "port": dst_port,
-                            "type": alert["type"],
-                            "severity": alert["severity"],
-                            "details": alert["details"]
-                        })
-                        self.callback(
-                            "alert",
-                            alert["message"],
-                            src_ip=src_ip,
-                            dst_ip=dst_ip,
-                            dst_port=dst_port,
-                            alert_type=alert.get("type", ""),
-                            severity=alert.get("severity", ""),
-                            details=alert.get("details", "")
-                        )
+            # Pass the packet bytes to the alert manager for analysis
+            alerts = self.alert_manager.analyze_packet(
+                analysis_src_ip, analysis_dst_ip, analysis_dst_port, packet_bytes, tcp_flags=tcp_flags
+            )
 
-                # Rate limit logging
-                current_time = time.time()
-                if current_time - self.last_log_time >= self.log_interval:
-                    msg = f"[OUTGOING] {src_ip} -> {dst_ip}:{dst_port} ({protocol})"
-                    self.callback("log", msg, src_ip=src_ip, dst_ip=dst_ip, dst_port=dst_port)
-                    self.last_log_time = current_time
+            if alerts:
+                self.stats["suspicious_connections"] += 1
+                for alert in alerts:
+                    self.stats["alerts"].append({
+                        "timestamp": datetime.now().isoformat(),
+                        "alert": alert["message"],
+                        "src": analysis_src_ip,
+                        "dst": analysis_dst_ip,
+                        "port": analysis_dst_port,
+                        "type": alert["type"],
+                        "severity": alert["severity"],
+                        "details": alert["details"],
+                        "direction": direction
+                    })
+                    self.callback(
+                        "alert",
+                        alert["message"],
+                        src_ip=analysis_src_ip,
+                        dst_ip=analysis_dst_ip,
+                        dst_port=analysis_dst_port,
+                        alert_type=alert.get("type", ""),
+                        severity=alert.get("severity", ""),
+                        details=alert.get("details", ""),
+                        direction=direction
+                    )
 
-                self.callback("packet", (src_ip, dst_ip, dst_port))
+            # Rate limit logging
+            current_time = time.time()
+            if current_time - self.last_log_time >= self.log_interval:
+                msg = f"[{direction}] {src_ip}:{getattr(packet, 'sport', 'N/A')} -> {dst_ip}:{dst_port} ({protocol})"
+                self.callback("log", msg, src_ip=src_ip, dst_ip=dst_ip, dst_port=dst_port, direction=direction)
+                self.last_log_time = current_time
+
+            self.callback("packet", (src_ip, dst_ip, dst_port, direction))
 
         except Exception as e:
             if self.running:
                 error_msg = f"[Error] Packet processing: {str(e)}"
                 self.callback("log", error_msg)
                 logging.error(error_msg)
+
+    def get_local_ip(self):
+        """Get the local IP address of the selected interface"""
+        try:
+            if self.selected_interface:
+                # Get interface addresses
+                addrs = psutil.net_if_addrs().get(self.selected_interface, [])
+                for addr in addrs:
+                    if addr.family == socket.AF_INET:
+                        return addr.address
+            return "127.0.0.1"  # Fallback
+        except Exception:
+            return "127.0.0.1"  # Fallback
 
     def _monitor_traffic(self):
         try:
@@ -219,23 +295,41 @@ class NetworkMonitor:
 
     def get_current_connections(self):
         connections_data = []
+        # Load ignored processes from settings
+        settings_manager = SettingsManager()
+        settings = settings_manager.load_settings()
+        ignored_processes = set([p.lower() for p in settings.get('ignored_processes', [])])
         for conn in psutil.net_connections(kind='inet'):
-            if conn.status != 'LISTEN' and conn.raddr:
-                try:
-                    proc = psutil.Process(conn.pid)
+            try:
+                proc = psutil.Process(conn.pid)
+                proc_name = proc.name().lower()
+                if proc_name in ignored_processes:
+                    continue  # Skip ignored processes
+                # Include both listening and established connections
+                if conn.raddr:  # Outgoing connections
                     connections_data.append({
                         "pid": conn.pid,
                         "process_name": proc.name(),
                         "local_address": f"{conn.laddr.ip}:{conn.laddr.port}",
                         "remote_address": f"{conn.raddr.ip}:{conn.raddr.port}",
-                        "status": conn.status
+                        "status": conn.status,
+                        "direction": "OUTGOING"
                     })
-                except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
-                    continue
-                except Exception as e:
-                    error_msg = f"[Error] psutil connection fetching: {e}"
-                    self.callback("log", error_msg)
-                    logging.error(error_msg)
+                elif conn.status == 'LISTEN':  # Listening connections (incoming)
+                    connections_data.append({
+                        "pid": conn.pid,
+                        "process_name": proc.name(),
+                        "local_address": f"{conn.laddr.ip}:{conn.laddr.port}",
+                        "remote_address": "LISTENING",
+                        "status": conn.status,
+                        "direction": "INCOMING"
+                    })
+            except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+                continue
+            except Exception as e:
+                error_msg = f"[Error] psutil connection fetching: {e}"
+                self.callback("log", error_msg)
+                logging.error(error_msg)
         return connections_data
 
     def get_stats(self):
@@ -254,8 +348,8 @@ class NetworkMonitor:
 # --- 2. ConnectionManager Class ---
 class ConnectionManager:
     def __init__(self):
-        self.connections = {}  # key: (pid, proc_name, local_addr, remote_addr, status), value: {data, is_pinned, pin_tag}
-        self.pinned_rows = {}  # key: (pid, proc_name, local_addr, remote_addr, status), value: pin_tag
+        self.connections = {}  # key: (pid, proc_name, local_addr, remote_addr, status, direction), value: {data, is_pinned, pin_tag}
+        self.pinned_rows = {}  # key: (pid, proc_name, local_addr, remote_addr, status, direction), value: pin_tag
         self.color_cycle = ["#ffe699", "#d9ead3", "#cfe2f3", "#f4cccc", "#ead1dc"]
         self.color_index = 0
 
@@ -266,7 +360,8 @@ class ConnectionManager:
             conn_data["process_name"],
             conn_data["local_address"],
             conn_data["remote_address"],
-            conn_data["status"]
+            conn_data["status"],
+            conn_data.get("direction", "UNKNOWN")
         )
         if key not in self.connections:
             self.connections[key] = {"data": conn_data, "is_pinned": False, "pin_tag": ""}
@@ -302,7 +397,7 @@ class ConnectionManager:
 
     def is_connection_pinned(self, src_ip, dst_ip, dst_port):
         for key in self.pinned_rows:
-            # key is (PID, Process, Local, Remote, Status)
+            # key is (PID, Process, Local, Remote, Status, Direction)
             pinned_local_ip, pinned_local_port = key[2].split(":")
             pinned_remote_ip, pinned_remote_port = key[3].split(":")
 
@@ -315,7 +410,7 @@ class ConnectionManager:
     def export_connections(self, filename):
         with open(filename, mode="w", newline="", encoding="utf-8") as file:
             writer = csv.writer(file)
-            writer.writerow(["PID", "Process", "Local", "Remote", "Status", "Pinned"])
+            writer.writerow(["PID", "Process", "Local", "Remote", "Status", "Direction", "Pinned"])
             for key, conn_info in self.connections.items():
                 is_pinned = "Yes" if conn_info["is_pinned"] else "No"
                 writer.writerow(list(key) + [is_pinned])
@@ -334,14 +429,16 @@ class ConnectionManager:
                     row["Process"],
                     row["Local"],
                     row["Remote"],
-                    row["Status"]
+                    row["Status"],
+                    row["Direction"]
                 )
                 conn_data = {
                     "pid": int(row["PID"]),
                     "process_name": row["Process"],
                     "local_address": row["Local"],
                     "remote_address": row["Remote"],
-                    "status": row["Status"]
+                    "status": row["Status"],
+                    "direction": row["Direction"]
                 }
                 self.connections[conn_key] = {"data": conn_data, "is_pinned": False, "pin_tag": ""}
 
@@ -712,7 +809,7 @@ class MaliciousIPWindow(SecurityToolWindow):
 class IDSAppGUI:
     def __init__(self, master, network_monitor, connection_manager):
         self.master = master
-        self.master.title("Python IDS - Network Security Monitor")
+        self.master.title("Python-based IDS System")
         self.master.geometry("1200x800")
 
         self.network_monitor = network_monitor
@@ -825,7 +922,7 @@ class IDSAppGUI:
         # --- Replace ScrolledText with Treeview for alerts ---
         self.alerts_tree = ttk.Treeview(
             alerts_frame,
-            columns=("Time", "Type", "Severity", "Source IP", "Destination IP", "Port", "Message"),
+            columns=("Time", "Type", "Severity", "Source IP", "Destination IP", "Port", "Direction", "Message"),
             show="headings",
             height=10
         )
@@ -841,8 +938,10 @@ class IDSAppGUI:
         self.alerts_tree.column("Destination IP", width=140, anchor=tk.CENTER)
         self.alerts_tree.heading("Port", text="Port")
         self.alerts_tree.column("Port", width=60, anchor=tk.CENTER)
+        self.alerts_tree.heading("Direction", text="Direction")
+        self.alerts_tree.column("Direction", width=80, anchor=tk.CENTER)
         self.alerts_tree.heading("Message", text="Message")
-        self.alerts_tree.column("Message", width=350, anchor=tk.W)
+        self.alerts_tree.column("Message", width=270, anchor=tk.W)
         self.alerts_tree.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
 
         # Add horizontal scrollbar
@@ -949,13 +1048,16 @@ class IDSAppGUI:
 
         self.tree = ttk.Treeview(
             conn_frame,
-            columns=("PID", "Process", "Local", "Remote", "Status"),
+            columns=("PID", "Process", "Local", "Remote", "Status", "Direction"),
             show='headings',
             yscrollcommand=self.tree_scroll.set
         )
         for col in self.tree["columns"]:
             self.tree.heading(col, text=col)
-            self.tree.column(col, width=150)
+            if col == "Direction":
+                self.tree.column(col, width=100)
+            else:
+                self.tree.column(col, width=150)
         self.tree.pack(fill=tk.BOTH, expand=True)
         self.tree_scroll.config(command=self.tree.yview)
 
@@ -979,6 +1081,7 @@ class IDSAppGUI:
         # Connection Management
         self.tree_menu.add_command(label="Pin Connection", command=self.pin_selected_connection)
         self.tree_menu.add_command(label="Unpin Connection", command=self.unpin_selected_connection)
+        self.tree_menu.add_command(label="Add Process to Ignore List", command=self.add_selected_process_to_ignore_list)
         self.tree_menu.add_separator()
         
         # Security Tools
@@ -1038,9 +1141,11 @@ class IDSAppGUI:
             self.network_monitor.remove_malicious_ip(remote_addr)
             self.log_message(f"[SECURITY] Removed IP {remote_addr} from malicious list")
 
-    def log_message(self, message, src_ip=None, dst_ip=None, dst_port=None, alert=False, alert_type="", severity="", details=""):
+    def log_message(self, message, src_ip=None, dst_ip=None, dst_port=None, alert=False, alert_type="", severity="", details="", direction=""):
         now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         info = f"[{now}]"
+        if direction:
+            info += f" [{direction}]"
         if alert:
             info += f" [{alert_type or 'Alert'}] [{severity or 'medium'}]"
         if src_ip:
@@ -1063,6 +1168,7 @@ class IDSAppGUI:
                 src_ip or "",
                 dst_ip or "",
                 dst_port or "",
+                direction or "",
                 message
             )
             self.alerts_tree.insert("", 0, values=alert_row)
@@ -1145,7 +1251,8 @@ class IDSAppGUI:
             src_ip = kwargs.get('src_ip')
             dst_ip = kwargs.get('dst_ip')
             dst_port = kwargs.get('dst_port')
-            self.master.after(0, lambda: self.log_message(message, src_ip, dst_ip, dst_port))
+            direction = kwargs.get('direction', 'UNKNOWN')
+            self.master.after(0, lambda: self.log_message(message, src_ip, dst_ip, dst_port, direction=direction))
         elif type == "alert":
             message = args[0]
             src_ip = kwargs.get('src_ip')
@@ -1154,9 +1261,10 @@ class IDSAppGUI:
             alert_type = kwargs.get('alert_type', "")
             severity = kwargs.get('severity', "")
             details = kwargs.get('details', "")
+            direction = kwargs.get('direction', 'UNKNOWN')
             self.master.after(0, lambda: self.log_message(
                 message, src_ip, dst_ip, dst_port, alert=True,
-                alert_type=alert_type, severity=severity, details=details
+                alert_type=alert_type, severity=severity, details=details, direction=direction
             ))
         elif type == "packet":
             pass
@@ -1546,7 +1654,7 @@ Combined filters:
                 with open(filename, 'w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     # Write all columns
-                    writer.writerow(["Time", "Type", "Severity", "Source IP", "Destination IP", "Port", "Message"])
+                    writer.writerow(["Time", "Type", "Severity", "Source IP", "Destination IP", "Port","Direction", "Message"])
                     for alert in alerts:
                         writer.writerow(list(alert))
             elif filename.endswith('.json'):
@@ -1563,6 +1671,23 @@ Combined filters:
             messagebox.showinfo("Export Successful", f"Alerts exported to {filename}")
         except Exception as e:
             messagebox.showerror("Export Failed", f"Could not export alerts: {e}")
+
+    def add_selected_process_to_ignore_list(self):
+        selected_item = self.tree.selection()
+        if selected_item:
+            values = self.tree.item(selected_item[0])["values"]
+            process_name = values[1] 
+            settings_manager = SettingsManager()
+            settings = settings_manager.load_settings()
+            ignored = settings.get('ignored_processes', [])
+            if process_name not in ignored:
+                ignored.append(process_name)
+                settings['ignored_processes'] = ignored
+                settings_manager.save_settings(settings)
+                messagebox.showinfo("Ignore List", f"Process '{process_name}' added to ignore list.")
+                self.update_treeview()
+            else:
+                messagebox.showinfo("Ignore List", f"Process '{process_name}' is already in the ignore list.")
 
 # --- Main Application Logic ---
 if __name__ == "__main__":

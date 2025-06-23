@@ -134,7 +134,7 @@ class AlertManager:
     def is_excluded_host(self, ip):
         return ip in self.excluded_high_volume_hosts
 
-    def analyze_packet(self, src_ip, dst_ip, dst_port, packet_data):
+    def analyze_packet(self, src_ip, dst_ip, dst_port, packet_data, tcp_flags=None):
         alerts = []
 
         # Check source IP for malicious activity
@@ -182,7 +182,7 @@ class AlertManager:
 
         try:
             # Get alerts from threat detector
-            alerts += self.threat_detector.analyze_packet(src_ip, dst_ip, dst_port, packet_data)
+            alerts += self.threat_detector.analyze_packet(src_ip, dst_ip, dst_port, packet_data, tcp_flags=tcp_flags)
 
             # Update alert statistics
             if alerts:
