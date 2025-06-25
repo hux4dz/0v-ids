@@ -212,7 +212,7 @@ python-ids/
 ├── alert_settings_window.py     # Alert configuration UI
 ├── threat_detection.py          # Core threat detection logic
 ├── malicious_ip_manager.py      # Malicious IP database management
-├── malicious_ip_window.py       # Malicious IP management UI
+├── malicious_ip_list.py         # Malicious IP management UI
 ├── port_scanner.py              # Port scanning functionality
 ├── ip_info.py                   # IP information lookup
 ├── settings_manager.py          # Configuration management
