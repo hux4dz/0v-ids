@@ -17,7 +17,6 @@ import whois
 from concurrent.futures import ThreadPoolExecutor
 from port_scanner import PortScanWindow
 from ip_info import IPInfoWindow
-from malicious_ip_checker import MaliciousIPWindow
 from settings_manager import SettingsManager, SettingsWindow
 from alert_manager import AlertManager
 from alert_settings_window import AlertSettingsWindow
@@ -512,7 +511,7 @@ class SecurityTools:
         if selected_item:
             values = self.tree.item(selected_item[0])["values"]
             remote_addr = values[3].split(":")[0]  # Get IP from Remote column
-            MaliciousIPWindow(self.master, remote_addr, self.security_tools)  # Pass security_tools instead of api_keys
+            MaliciousIPCheckWindow(self.master, remote_addr, self.security_tools)  # Pass security_tools instead of api_keys
 
 # Add new window classes for security tools
 class SecurityToolWindow:
@@ -599,7 +598,7 @@ class IPInfoWindow(SecurityToolWindow):
                 f.write(self.text_area.get(1.0, tk.END))
             self.add_text(f"\nInformation exported to {filename}", "success")
 
-class MaliciousIPWindow(SecurityToolWindow):
+class MaliciousIPCheckWindow(SecurityToolWindow):
     def __init__(self, parent, ip, security_tools):
         super().__init__(parent, f"Malicious IP Check - {ip}")
         self.ip = ip
@@ -659,7 +658,7 @@ class MaliciousIPWindow(SecurityToolWindow):
         
     def check_ip(self):
         self.clear()
-        self.add_text("Starting IP reputation check...", "info")
+        self.add_text("Starting IP check...", "info")
         self.timestamp_label.config(text=datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
         
         def check():
@@ -1084,7 +1083,7 @@ class IDSAppGUI:
         self.tree_menu.add_command(label="Add Process to Ignore List", command=self.add_selected_process_to_ignore_list)
         self.tree_menu.add_separator()
         
-        # Security Tools
+        # Security Tools Right Click Menu
         security_menu = Menu(self.tree_menu, tearoff=0)
         self.tree_menu.add_cascade(label="Security Tools", menu=security_menu)
         security_menu.add_command(label="Port Scan", command=self.port_scan_selected)
@@ -1329,7 +1328,7 @@ class IDSAppGUI:
         if selected_item:
             values = self.tree.item(selected_item[0])["values"]
             remote_addr = values[3].split(":")[0]  # Get IP from Remote column
-            MaliciousIPWindow(self.master, remote_addr, self.security_tools)  # Pass security_tools instead of api_keys
+            MaliciousIPCheckWindow(self.master, remote_addr, self.security_tools)  # Pass security_tools instead of api_keys
 
     def show_settings(self):
         """Open settings window"""
@@ -1340,8 +1339,8 @@ class IDSAppGUI:
 
     def show_malicious_ip_manager(self):
         """Open the malicious IP manager window"""
-        from malicious_ip_window import MaliciousIPWindow
-        MaliciousIPWindow(self.master)
+        from malicious_ip_list import MaliciousIPWindowList
+        MaliciousIPWindowList(self.master)
 
     def _create_filter_help_tooltip(self, parent):
         help_text = """Filter Syntax:
@@ -1621,7 +1620,7 @@ Combined filters:
             values = self.alerts_tree.item(selected[0])["values"]
             src_ip = values[3]
             if src_ip:
-                MaliciousIPWindow(self.master, src_ip, self.security_tools)
+                MaliciousIPCheckWindow(self.master, src_ip, self.security_tools)
 
     def check_alert_dst_malicious_ip(self):
         selected = self.alerts_tree.selection()
@@ -1629,7 +1628,7 @@ Combined filters:
             values = self.alerts_tree.item(selected[0])["values"]
             dst_ip = values[4]
             if dst_ip:
-                MaliciousIPWindow(self.master, dst_ip, self.security_tools)
+                MaliciousIPCheckWindow(self.master, dst_ip, self.security_tools)
 
     def clear_alerts(self):
         for item in self.alerts_tree.get_children():

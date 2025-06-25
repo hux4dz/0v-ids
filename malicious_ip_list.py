@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 import json
 from malicious_ip_manager import MaliciousIPManager
 
-class MaliciousIPWindow:
+class MaliciousIPWindowList:
     def __init__(self, parent):
         self.window = tk.Toplevel(parent)
         self.window.title("Malicious IP Manager")

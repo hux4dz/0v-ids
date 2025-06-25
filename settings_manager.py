@@ -11,8 +11,7 @@ class SettingsManager:
             'api_keys': {
                 'abuseipdb': '',
                 'virustotal': '',
-                'alienvault': '',
-                'threatfox': ''
+                'alienvault': ''
             },
             'scan_settings': {
                 'default_ports': '20-25,53,80,110-111,135,139,143,443,445,993,995,1723,3306,3389,5900,8080',
@@ -103,7 +102,7 @@ class SettingsWindow:
         self._create_api_tab()
         self._create_scan_tab()
         self._create_monitor_tab()
-        self._create_ui_tab()
+       
         
         # Buttons
         button_frame = ttk.Frame(main_frame)
@@ -122,7 +121,7 @@ class SettingsWindow:
         row = 0
         for api_name in self.current_settings['api_keys'].keys():
             ttk.Label(frame, text=f"{api_name.title()} API Key:").grid(row=row, column=0, sticky=tk.W, pady=2)
-            entry = ttk.Entry(frame, width=50, show="*")
+            entry = ttk.Entry(frame, width=50, show="-")
             entry.insert(0, self.current_settings['api_keys'][api_name])
             entry.grid(row=row, column=1, sticky=tk.W, pady=2)
             self.api_entries[api_name] = entry
@@ -134,13 +133,11 @@ class SettingsWindow:
         - AbuseIPDB: For IP reputation checking
         - VirusTotal: For malware detection
         - AlienVault: For threat intelligence
-        - ThreatFox: For malware information
         
         Get your API keys from their respective websites:
         - AbuseIPDB: https://www.abuseipdb.com/
         - VirusTotal: https://www.virustotal.com/
         - AlienVault: https://otx.alienvault.com/
-        - ThreatFox: https://threatfox-api.abuse.ch/
         """
         help_label = ttk.Label(frame, text=help_text, wraplength=600)
         help_label.grid(row=row, column=0, columnspan=2, sticky=tk.W, pady=10)
@@ -189,27 +186,6 @@ class SettingsWindow:
         self.log_interval_entry.insert(0, str(self.current_settings['monitor_settings']['log_interval']))
         self.log_interval_entry.grid(row=2, column=1, sticky=tk.W, pady=2)
         
-    def _create_ui_tab(self):
-        frame = ttk.LabelFrame(self.ui_tab, text="User Interface Settings", padding="10")
-        frame.pack(fill=tk.BOTH, expand=True, padx=5, pady=5)
-        
-        # Theme selection
-        ttk.Label(frame, text="Theme:").grid(row=0, column=0, sticky=tk.W, pady=2)
-        self.theme_var = tk.StringVar(value=self.current_settings['ui_settings']['theme'])
-        theme_combo = ttk.Combobox(frame, textvariable=self.theme_var, values=['default', 'dark', 'light'])
-        theme_combo.grid(row=0, column=1, sticky=tk.W, pady=2)
-        
-        # Font size
-        ttk.Label(frame, text="Font Size:").grid(row=1, column=0, sticky=tk.W, pady=2)
-        self.font_size_entry = ttk.Entry(frame, width=10)
-        self.font_size_entry.insert(0, str(self.current_settings['ui_settings']['font_size']))
-        self.font_size_entry.grid(row=1, column=1, sticky=tk.W, pady=2)
-        
-        # Window size
-        ttk.Label(frame, text="Window Size:").grid(row=2, column=0, sticky=tk.W, pady=2)
-        self.window_size_entry = ttk.Entry(frame, width=10)
-        self.window_size_entry.insert(0, self.current_settings['ui_settings']['window_size'])
-        self.window_size_entry.grid(row=2, column=1, sticky=tk.W, pady=2)
         
     def save_settings(self):
         """Save all settings"""

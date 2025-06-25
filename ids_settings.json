@@ -2,8 +2,7 @@
     "api_keys": {
         "abuseipdb": "",
         "virustotal": "",
-        "alienvault": "",
-        "threatfox": ""
+        "alienvault": ""
     },
     "scan_settings": {
         "default_ports": "20-25,53,80,110-111,135,139,143,443,445,993,995,1723,3306,3389,5900,8080",
@@ -17,38 +16,67 @@
     },
     "ui_settings": {
         "theme": "default",
-        "font_size": 12,
+        "font_size": 18,
         "window_size": "1200x800"
     },
     "alert_settings": {
         "connection_flood": {
-            "threshold": 550,
-            "cooldown": 133,
+            "threshold": 1250,
+            "cooldown": 60,
             "description": "Number of connections before alerting",
-            "severity": "low"
+            "severity": "low",
+            "enabled": true
         },
         "port_scan": {
-            "threshold": 66,
-            "cooldown": 472,
+            "threshold": 14,
+            "cooldown": 10,
             "description": "Number of ports scanned before alerting",
-            "severity": "low"
+            "severity": "low",
+            "enabled": true
         },
         "data_transfer": {
-            "threshold": 1152,
+            "threshold": 1200,
             "cooldown": 60,
             "description": "Data transfer size threshold in bytes",
-            "severity": "low"
+            "severity": "medium",
+            "enabled": true
         },
         "suspicious_pattern": {
             "port_threshold": 10,
             "connection_threshold": 20,
             "cooldown": 300,
             "description": "Thresholds for suspicious connection patterns",
-            "severity": "low"
+            "severity": "low",
+            "enabled": true
         },
         "alert_cooldown": {
             "default": 60,
             "description": "Default cooldown period between repeated alerts"
+        },
+        "data_exfiltration": {
+            "size": 1092200,
+            "window": 60,
+            "description": "Amount of data transferred within time window (in bytes)",
+            "severity": "medium",
+            "enabled": true
+        },
+        "malicious_ip": {
+            "enabled": true,
+            "severity": "high",
+            "description": "Connection from known malicious IP"
+        },
+        "suspicious_port": {
+            "enabled": true,
+            "description": "Access to suspicious port detected"
+        },
+        "attack_patterns": {
+            "enabled": true,
+            "severity": "high",
+            "description": "Attack pattern detected in traffic"
+        },
+        "alert_history": {
+            "max_alerts": 1000,
+            "description": "Maximum number of alerts to keep in history"
         }
     },
     "suspicious_ports": {
@@ -108,9 +136,9 @@
             "description": "Memcached Server"
         },
         "555": {
-            "service": "fgdg",
-            "risk": "medium",
-            "description": "fdgdfg"
+            "service": "CatScratch",
+            "risk_level": "medium",
+            "description": "CatScratch"
         }
     },
     "ignored_protocols": {},
@@ -124,7 +152,6 @@
         "8.66.66.100"
     ],
     "ignored_ports": {
-        "80": "Standard HTTP traffic",
         "443": "Standard HTTPS traffic",
         "53": "Standard DNS traffic"
     },
@@ -165,5 +192,30 @@
             "export_interval": 24,
             "export_path": "./exports"
         }
-    }
+    },
+    "attack_patterns": {
+        "sql_injection": [
+            "(?i)('|\"|%27|%22|`).*\\s(union|select)\\s.*(from|into)",
+            "(?i)('|\"|%27|%22|`|;).*(waitfor|sleep|benchmark)\\(",
+            "(\\b(exec|execute|xp_cmdshell|sp_executesql)\\b)"
+        ],
+        "xss": [
+            "(?i)(<|%3C)script.*?(>|%3E).*(<|%3C)\\/script.*?(>|%3E)",
+            "(?i)javascript:",
+            "(?i)on(error|load|click|mouseover|focus|submit|change|input|drag|drop|keypress|keydown|keyup)\\s*=",
+            "\\b(alert|confirm|prompt)\\s*\\(",
+            "document\\.(cookie|location|domain|write)",
+            "eval\\s*\\(",
+            "window\\."
+        ]
+    },
+    "ignored_processes": [
+        "chrome.exe",
+        "firefox.exe",
+        "System Idle Process",
+        "spoolsv.exe",
+        "Cursor.exe",
+        "asus_framework.exe",
+        "msedge.exe"
+    ]
 }

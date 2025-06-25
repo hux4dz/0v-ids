@@ -4,9 +4,3 @@ scapy>=2.5.0  # Powerful packet manipulation library for network scanning, packe
 netifaces>=0.11.0  # Cross-platform library for retrieving network interface information and IP addresses
 python-dotenv>=1.0.0  # Load environment variables from .env files for secure configuration management
 
-# Development dependencies (optional)
-# Uncomment these if you need to run tests or format code
-# pytest>=7.4.0  # Testing framework for writing and running unit tests
-# black>=23.7.0  # Code formatter for consistent Python code style
-# mypy>=1.5.1  # Static type checker for Python
-# flake8>=6.1.0  # Code linter for style guide enforcement and code quality checks 
